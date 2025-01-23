@@ -374,7 +374,7 @@ fun JournalCard(journal: Journal, viewModel: JournalViewModel, onClick: () -> Un
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(horizontal = 16.dp, vertical =12.dp)
             )
         }
 
