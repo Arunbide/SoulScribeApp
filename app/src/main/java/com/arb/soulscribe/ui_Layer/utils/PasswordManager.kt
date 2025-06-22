@@ -19,4 +19,9 @@ object PasswordManager {
     fun isPasswordSet(context: Context): Boolean {
         return getPassword(context) != null
     }
+
+    fun removePassword(context: Context) {
+        val prefs = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        prefs.edit().remove(KEY_PASSWORD).apply()
+    }
 }

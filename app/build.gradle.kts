@@ -71,6 +71,7 @@ dependencies {
     annotationProcessor("androidx.room:room-compiler:$room_version")
     val nav_version = "2.8.5"
     implementation ("androidx.navigation:navigation-compose:$nav_version")
+    implementation ("com.google.code.gson:gson:2.12.0")
 
 
 }

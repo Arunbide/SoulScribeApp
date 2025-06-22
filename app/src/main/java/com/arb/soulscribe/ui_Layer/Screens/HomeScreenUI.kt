@@ -13,7 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.*
@@ -28,16 +28,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-
 import androidx.navigation.NavController
 import com.arb.soulscribe.navigation.AddEditScreen
 import com.arb.soulscribe.Data.Table.Journal
+import com.arb.soulscribe.navigation.Backupscreen
+import com.arb.soulscribe.navigation.PasswordSetting
 import com.arb.soulscribe.ui_Layer.Screen.CalendarView
 import com.arb.soulscribe.ui_Layer.ViewModel.JournalViewModel
 import com.arb.soulscribe.ui_Layer.States.JournalUiState
@@ -61,58 +61,150 @@ fun HomeScreenUI(
     }
 
     if (showDialog) {
-        AlertDialog(containerColor = Color(0xFF121025),
+        AlertDialog(
+            containerColor = Color(0xFF121025),
             onDismissRequest = { showDialog = false },
-            title = { Text(text = "Exit App") },
-            text = { Text(text = "Are you sure you want to exit the app?") },
+            title = { Text(text = "Exit App", color = Color.White) },
+            text = { Text(text = "Are you sure you want to exit the app?", color = Color.White) },
             confirmButton = {
-                Button(onClick = { activity?.finish() },
+                Button(
+                    onClick = { activity?.finish() },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    ) {
-                    Text(text = "Yes")
+                ) {
+                    Text(text = "Yes", color = Color.White)
                 }
             },
             dismissButton = {
-                Button(onClick = { showDialog = false },
+                Button(
+                    onClick = { showDialog = false },
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-                    ) {
-                    Text(text = "No",)
+                ) {
+                    Text(text = "No", color = Color.White)
                 }
             }
         )
     }
 
-    Scaffold( containerColor =Color(0xFF231B33),
+    Scaffold(
+        containerColor = Color(0xFF231B33),
         contentColor = contentColorFor(containerColor),
         topBar = {
+            var menuExpanded by remember { mutableStateOf(false) }
+
             TopAppBar(
                 title = {
                     Text(
                         "SoulScribe",
-                        style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Bold, color = Color.White)
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
                     )
                 },
+                actions = {
+                    Box {
+                        IconButton(onClick = { menuExpanded = true }) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "Menu",
+                                tint = Color.White
+                            )
+                        }
+
+                        // Fixed Dropdown Menu with proper styling
+                        DropdownMenu(
+                            expanded = menuExpanded,
+                            onDismissRequest = { menuExpanded = false },
+                            modifier = Modifier
+                                .background(
+                                    color = Color(0xFF2A1F3D),
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                                .width(180.dp),
+                            offset = DpOffset(x = (-8).dp, y = 8.dp)
+                        ) {
+                            // Lock App Option
+                            DropdownMenuItem(
+                                text = {
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Lock,
+                                            contentDescription = "Lock",
+                                            tint = Color.White,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                        Text(
+                                            "Lock App",
+                                            style = MaterialTheme.typography.bodyMedium.copy(
+                                                color = Color.White,
+                                                fontWeight = FontWeight.Medium
+                                            )
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    navController.navigate(PasswordSetting)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+
+                            // Divider
+                            HorizontalDivider(
+                                thickness = 0.5.dp,
+                                color = Color.White.copy(alpha = 0.2f),
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            )
+
+                            // Backup & Restore Option
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        "Backup & Restore",
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    )
+                                },
+                                onClick = {
+                                    menuExpanded = false
+                                    navController.navigate(Backupscreen)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
+                    }
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = Color(0xFF231B33),
-
+                    containerColor = Color(0xFF231B33)
                 )
-
             )
-
         },
         floatingActionButton = {
             if (selectedTab == 0) {
-
-                FloatingActionButton(onClick = {
-                    viewModel.resetStateforNewEntry()
-                    navController.navigate(
-                        AddEditScreen
-
-                    ) }, modifier = Modifier.size(70.dp), shape = RoundedCornerShape(40),
-                    containerColor = Color(0xFF3E3B67)) {
-                    Icon(imageVector = Icons.Rounded.Add,
+                FloatingActionButton(
+                    onClick = {
+                        viewModel.resetStateforNewEntry()
+                        navController.navigate(AddEditScreen)
+                    },
+                    modifier = Modifier.size(70.dp),
+                    shape = RoundedCornerShape(40),
+                    containerColor = Color(0xFF3E3B67)
+                ) {
+                    Icon(
+                        imageVector = Icons.Rounded.Add,
                         contentDescription = "Add Journal",
-                        modifier = Modifier.size(30.dp))
+                        modifier = Modifier.size(30.dp),
+                        tint = Color.White
+                    )
                 }
             }
         },
@@ -126,10 +218,7 @@ fun HomeScreenUI(
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.DarkGray)
                 ) {
-                    Row(
-                        Modifier.fillMaxSize()
-                    ) {
-
+                    Row(Modifier.fillMaxSize()) {
                         Box(
                             modifier = Modifier
                                 .weight(1f)
@@ -145,7 +234,6 @@ fun HomeScreenUI(
                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold)
                             )
                         }
-
 
                         Box(
                             modifier = Modifier
@@ -169,16 +257,14 @@ fun HomeScreenUI(
 
                 when (selectedTab) {
                     0 -> JournalListScreen(state, navController, viewModel)
-                    1 -> CalendarView(
-                        viewModel,
-                        navController = navController,
-                    )
+                    1 -> CalendarView(viewModel, navController = navController)
                 }
             }
-
         }
     )
-} @Composable
+}
+
+@Composable
 fun JournalListScreen(
     state: JournalUiState,
     navController: NavController,
@@ -190,8 +276,6 @@ fun JournalListScreen(
         delay(1000)
         isLoadingTimedOut = true
     }
-
-
 
     if (state.journalList.isEmpty() && !isLoadingTimedOut) {
         LazyColumn(
@@ -211,7 +295,7 @@ fun JournalListScreen(
                 .padding(horizontal = 0.dp)
                 .background(
                     Brush.linearGradient(
-                        colors = listOf(Color(0xFF121025), Color(0xFF5E3B67)) // Gradient background colors
+                        colors = listOf(Color(0xFF121025), Color(0xFF5E3B67))
                     )
                 ),
             verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -231,8 +315,6 @@ fun JournalListScreen(
                         )
                     }
                 }
-
-
             } else {
                 items(state.journalList) { journal ->
                     JournalCard(
@@ -249,7 +331,6 @@ fun JournalListScreen(
     }
 }
 
-
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun JournalCard(journal: Journal, viewModel: JournalViewModel, onClick: () -> Unit) {
@@ -259,9 +340,11 @@ fun JournalCard(journal: Journal, viewModel: JournalViewModel, onClick: () -> Un
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 12.dp, start = 15.dp, end = 15.dp)
-
-            .combinedClickable(onClick = { onClick() }, onLongClick = { MenuVisible = true }),
-        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.1f)), // Whitish transparent background
+            .combinedClickable(
+                onClick = { onClick() },
+                onLongClick = { MenuVisible = true }
+            ),
+        colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.1f)),
         border = BorderStroke(1.dp, Color.White.copy(alpha = 0.03f)),
         shape = MaterialTheme.shapes.medium
     ) {
@@ -271,7 +354,6 @@ fun JournalCard(journal: Journal, viewModel: JournalViewModel, onClick: () -> Un
                 .padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-
             Column {
                 Text(
                     text = journal.title,
@@ -291,6 +373,7 @@ fun JournalCard(journal: Journal, viewModel: JournalViewModel, onClick: () -> Un
                     overflow = TextOverflow.Ellipsis
                 )
             }
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Column(modifier = Modifier.height(20.dp)) {
@@ -299,8 +382,7 @@ fun JournalCard(journal: Journal, viewModel: JournalViewModel, onClick: () -> Un
                     color = Color.White.copy(alpha = 0.1f)
                 )
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
@@ -310,76 +392,76 @@ fun JournalCard(journal: Journal, viewModel: JournalViewModel, onClick: () -> Un
                         style = MaterialTheme.typography.bodySmall
                     )
 
-
-                    IconButton(
-                        onClick = { MenuVisible = true },
-                        modifier = Modifier.align(Alignment.CenterVertically)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "More options",
-                            modifier = Modifier.graphicsLayer(
-                                rotationZ = 90f
+                    Box {
+                        IconButton(
+                            onClick = { MenuVisible = true }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "More options",
+                                modifier = Modifier.graphicsLayer(rotationZ = 90f),
+                                tint = Color.White
                             )
-                        )
+                        }
+
+                        // Fixed Card Dropdown Menu
+                        DropdownMenu(
+                            expanded = MenuVisible,
+                            onDismissRequest = { MenuVisible = false },
+                            modifier = Modifier
+                                .background(
+                                    color = Color(0xFF2A1F3D),
+                                    shape = RoundedCornerShape(12.dp)
+                                )
+                                .width(160.dp),
+                            offset = DpOffset(x = (-120).dp, y = (-8).dp)
+                        ) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        "Delete",
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            color = Color(0xFFFF6B6B),
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    )
+                                },
+                                onClick = {
+                                    MenuVisible = false
+                                    viewModel.deleteEntries(journal)
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+
+                            HorizontalDivider(
+                                thickness = 0.5.dp,
+                                color = Color.White.copy(alpha = 0.2f),
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            )
+
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        "Cancel",
+                                        style = MaterialTheme.typography.bodyMedium.copy(
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Medium
+                                        )
+                                    )
+                                },
+                                onClick = {
+                                    MenuVisible = false
+                                },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                        }
                     }
                 }
             }
         }
-
-
-        DropdownMenu(
-            expanded = MenuVisible,
-            onDismissRequest = { MenuVisible = false },
-            modifier = Modifier
-                .background(
-                    color = Color(0xf0231B33),
-                    shape = MaterialTheme.shapes.extraLarge
-                )
-
-                .width(200.dp),
-            offset = DpOffset(x = (-16).dp, y = 0.dp)
-        ) {
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        "Delete",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = Color.Red,
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                },
-                onClick = {
-                    MenuVisible = false
-                    viewModel.deleteEntries(journal)
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
-            )
-            HorizontalDivider(thickness = 1.dp, color = Color.LightGray)
-            DropdownMenuItem(
-                text = {
-                    Text(
-                        "Cancel",
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            color = Color(0xFF007AFF),
-                            fontWeight = FontWeight.Medium
-                        )
-                    )
-                },
-                onClick = {
-                    MenuVisible = false
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical =12.dp)
-            )
-        }
-
     }
-    }
-
-
-
+}

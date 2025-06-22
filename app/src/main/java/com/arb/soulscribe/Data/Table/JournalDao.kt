@@ -19,4 +19,6 @@ interface JournalDao {
     @Query("SELECT * FROM JOURNAL_ENTRIES WHERE date = :date")
     fun getJournalEntriesByDate(date: String): Flow<List<Journal>>
 
+    @Query("SELECT * FROM JOURNAL_ENTRIES ORDER BY id DESC")
+    suspend fun getAllJournalList(): List<Journal>
 }

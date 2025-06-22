@@ -14,3 +14,7 @@ object PasswordScreen
 object  LockScreen
 @Serializable
 object AppStartup
+@Serializable
+object Backupscreen
+@Serializable
+object PasswordSetting

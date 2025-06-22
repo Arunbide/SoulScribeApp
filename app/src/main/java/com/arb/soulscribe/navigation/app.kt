@@ -4,7 +4,6 @@ import PassScreenUI
 import WalkThroughScreenUI
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -17,13 +16,17 @@ import com.arb.soulscribe.ui_Layer.Screens.HomeScreenUI
 import com.arb.soulscribe.ui_Layer.Screens.LockScreenUI
 
 import androidx.compose.ui.platform.LocalContext
+import com.arb.soulscribe.ui_Layer.Screens.BackupScreenUI
 import com.arb.soulscribe.ui_Layer.Screens.JournalEntriesScreen
+import com.arb.soulscribe.ui_Layer.Screens.SetupPasswordScreen
 
 @Composable
-fun App(modifier: Modifier = Modifier, viewModel: JournalViewModel = hiltViewModel()) {
+fun App( viewModel: JournalViewModel = hiltViewModel()) {
     val navController = rememberNavController()
     val state = viewModel.state.collectAsState()
-    val context = LocalContext.current // Get the context here
+    val context = LocalContext.current
+
+
 
     NavHost(navController = navController, startDestination = AppStartup) {
         composable<HomeScreen> {
@@ -54,6 +57,14 @@ fun App(modifier: Modifier = Modifier, viewModel: JournalViewModel = hiltViewMod
         composable("journal_entries/{date}") { backStackEntry ->
             val date = backStackEntry.arguments?.getString("date") ?: ""
             JournalEntriesScreen(viewModel, date,navController=navController)
+        }
+
+        composable<Backupscreen> {
+            BackupScreenUI(navController)
+        }
+        composable<PasswordSetting> {
+            SetupPasswordScreen(navController = navController)
+
         }
     }
 }

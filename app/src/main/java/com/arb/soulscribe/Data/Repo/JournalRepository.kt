@@ -22,6 +22,10 @@ database.GetJournalDao().updateJournal(journal)
 
     }
 
+    suspend fun getAllJournalList(): List<Journal> {
+        return database.GetJournalDao().getAllJournalList()
+    }
+
 
 
 }
